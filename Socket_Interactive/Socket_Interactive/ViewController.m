@@ -9,6 +9,10 @@
 #import "ViewController.h"
 
 @interface ViewController ()
+/**
+ *  webview浏览器展示
+ */
+@property (weak, nonatomic) IBOutlet UIWebView *webview;
 
 @end
 
