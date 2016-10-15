@@ -50,4 +50,36 @@
     }
 }
 
+#pragma mark - 发送请求获取响应体数据
+- (NSString *)sentAndRecv:(NSString *)msg {
+    const char *str = msg.UTF8String;
+    ssize_t sentLen = send(_clientSocket, str, strlen(str), 0);
+
+    //数据的累加
+    NSMutableString *mStr = [NSMutableString string];
+    
+    /*
+     1.socket
+     2.存放数据的缓冲区
+     3.缓冲区长度。
+     4.指定调用方式。 0
+     返回值 接收成功的字符数
+     */
+    char *buf[1024];
+    ssize_t recvLen = recv(_clientSocket, buf, sizeof(buf), 0);
+    
+    NSString *recvStr = [[NSString alloc] initWithBytes:buf length:recvLen encoding:NSUTF8StringEncoding];
+    
+    [mStr appendString:recvStr];
+    
+    // 不断的获取数据 判断的依据是recvLen
+    while (recvLen != 0) {
+        recvLen = recv(_clientSocket, buf, sizeof(buf), 0);
+        
+        NSString *recvStr = [[NSString alloc] initWithBytes:buf length:recvLen encoding:NSUTF8StringEncoding];
+        
+        [mStr appendString:recvStr];
+    }
+    return mStr.copy;
+}
 @end
