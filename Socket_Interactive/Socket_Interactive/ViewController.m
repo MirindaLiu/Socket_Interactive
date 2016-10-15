@@ -28,9 +28,36 @@
     [self socketDemo];
 }
 
-- (void)socketDemo {
 
+- (void)socketDemo {
     
+    //连接百度
+    [self connectToServer:@"115.239.210.27" port:80];
+
+    //发送HTTP格式请求
+    NSString *requestStr =@"GET / HTTP/1.1\r\n"
+    "Host: www.baidu.com\r\n"
+    "Connection: close\r\n\r\n";
+    
+    //获取响应
+    NSString *responseStr = [self sentAndRecv:requestStr];
+    
+    //分离响应体
+//    第一种方式分割:
+    NSRange range = [responseStr rangeOfString:@"\r\n\r\n"];
+    NSString *htmlStr = [responseStr substringFromIndex:range.location+range.length];
+    NSLog(@"%@",htmlStr);
+//    第二种方式分割:
+    NSArray * htmlArray = [responseStr componentsSeparatedByString:@"\r\n\r\n"];
+    NSString * htmlStr2 = [htmlArray lastObject];
+    NSLog(@"------------------------------------------");
+    NSLog(@"%@",htmlStr2);
+    
+    
+    //网页数据使用webview来显示
+    //http://www.baidu.com/1.png ./1.png
+    NSURL *url = [NSURL URLWithString:@"http://www.baidu.com/"];
+    [self.webview loadHTMLString:htmlStr2 baseURL:url];
 }
 
 #pragma mark - 建立连接
